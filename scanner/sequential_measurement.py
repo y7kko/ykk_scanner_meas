@@ -442,10 +442,6 @@ class ScannerMeasurement():
                                                           self.in_channel[self.in_channel_ref], 
                                                       sensitivity = 1, ai_range = self.ai_range)
             
-<<<<<<< Updated upstream
-        
-    
-=======
     def lanxi_initializer(self, ip_address = "169.254.180.173",
                           sensor_dict_list = None, in_channel_ref_num = 1):
         """ Initialize NI for measurement
@@ -480,7 +476,6 @@ class ScannerMeasurement():
     #     self.in_channel_ref_num = in_channel_ref_num
     #     self.get_ref_and_other_chs()
         
->>>>>>> Stashed changes
     def pytta_play_rec_setup(self, in_channel = [1, 2], out_channel = [1, 2],
                              in_channel_ref_num = 1, output_amplification = -3):
         """ Configure measurement of response signal using pytta and sound card
@@ -547,11 +542,6 @@ class ScannerMeasurement():
         print('Acqusition ended')
         return yt_rec_obj
     
-<<<<<<< Updated upstream
-    # def ni_play_rec(self,):
-    #     """ Measure response signal using pytta and NI
-        
-=======
     def lanxi_rec_noise(self,):
         """ Measure the microphone signal in the enviroment
         
@@ -575,7 +565,6 @@ class ScannerMeasurement():
     # def ni_play_rec(self,):
     #     """ Measure response signal using pytta and NI
         
->>>>>>> Stashed changes
     #     Returns
     #     ----------
     #     yt_rec_obj : pytta object
@@ -1096,11 +1085,8 @@ class ScannerMeasurement():
                                                      device = playback_device)
         elif self.play_rec_type == 'SC play and rec':  # play-rec with NI
             yt_obj = self.pytta_play_rec()
-<<<<<<< Updated upstream
-=======
         elif self.play_rec_type == 'LANXI play and rec':
             yt_obj = self.lanxi_control_obj.play_rec()
->>>>>>> Stashed changes
         else:
             raise ValueError("Invalid choice of playback and record")
         return yt_obj
@@ -1127,11 +1113,7 @@ class ScannerMeasurement():
                                               playback_device = playback_device)
             pcc_val = self.pcc_magspk(yt_obj, ref_ch = self.in_channel_ref)
             if pcc_val < pcc_min:
-<<<<<<< Updated upstream
-                time.sleep(1)
-=======
                 time.sleep(3)
->>>>>>> Stashed changes
                 trial_num += 1
                 print("PCC = {}. I'll do a measurement #{}.".format(pcc_val, trial_num))
                 self.failure_count += 1                
@@ -1148,11 +1130,8 @@ class ScannerMeasurement():
             print("NI not done yet. Going on...")
         elif self.play_rec_type == 'SC play and rec':  # rec with NI
             yt_obj = self.pytta_rec_noise()
-<<<<<<< Updated upstream
-=======
         elif self.play_rec_type == 'LANXI play and rec':
             yt_obj = self.lanxi_rec_noise()
->>>>>>> Stashed changes
         else:
             raise ValueError("Invalid choice of recording")
         return yt_obj
@@ -1161,11 +1140,7 @@ class ScannerMeasurement():
                                noise_at_each_nth = None,
                                pcc_min = 0.9999,
                                max_num_of_trials = 20,
-<<<<<<< Updated upstream
-                               reference_signal = None, playback_device = None):
-=======
                                reference_signal = None, playback_device = None, notify_func= None):
->>>>>>> Stashed changes
         """ Move all motors sequentially through the array positions
         
         Parameters
@@ -1202,14 +1177,11 @@ class ScannerMeasurement():
                 # Greetings for this measurement (playback and record)
                 print('\n Playback and record at Receiver {} of {} (Repeat {} of {})'.format(
                     jrec+1, self.receivers.coord.shape[0], jmeas+1, self.repetitions))
-<<<<<<< Updated upstream
-=======
                 
                 if notify_func is not None:
                     notify_func('\n Playback and record at Receiver {} of {} (Repeat {} of {})'.format(
                     jrec+1, self.receivers.coord.shape[0], jmeas+1, self.repetitions))
                 
->>>>>>> Stashed changes
                 # PLayback and record
                 # yt_obj = self.playback_and_record()
                 yt_obj = self.pcc_playback_and_record(pcc_min = pcc_min,
@@ -1531,27 +1503,11 @@ class ScannerMeasurement():
                                    sensor_dict_list = self.sensor_dict_list,
                                    in_channel_ref_num = self.in_channel_ref_num)
         else:
-<<<<<<< Updated upstream
-            try:
-                self.ni_initializer(buffer_size = self.buffer_size, 
-                                    play_rec_type = self.play_rec_type)
-                self.ni_set_output_channels(out_channel_to_ni = self.out_channel_to_ni, 
-                                            out_channel_to_amp = self.out_channel_to_amp, 
-                                            ao_range = self.ao_range)
-                self.ni_set_input_channels(in_channel = self.in_channel, 
-                                        in_channel_ref_num = self.in_channel_ref_num,
-                                        ai_range = self.ai_range, 
-                                        sensor_sens = self.sensor_sens, 
-                                        sensor_current = self.sensor_current)
-            except:
-                print("Seems that NI is not connected. Load object without being able to measure again.")
-=======
             print("Loading on PayRec type as PyTTa for lack of clarity")
             self.pytta_play_rec_setup(in_channel = self.in_channel, 
                                       out_channel = self.out_channel, 
                                       output_amplification = self.output_amplification)
         
->>>>>>> Stashed changes
         self.__dict__.update(tmp_dict)
         
         

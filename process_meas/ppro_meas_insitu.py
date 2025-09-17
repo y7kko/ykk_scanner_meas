@@ -675,12 +675,8 @@ class InsituMeasurementPostPro():
         """
         num_of_axis = figformat[0]*figformat[1]
         num_of_cur_axis = int(self.meas_obj.receivers.coord.shape[0]/num_of_axis)
-<<<<<<< Updated upstream
-        return num_of_cur_axis
-=======
         num_of_remaining_cur = self.meas_obj.receivers.coord.shape[0] - num_of_axis*num_of_cur_axis
         return num_of_cur_axis, num_of_remaining_cur
->>>>>>> Stashed changes
             
     def plot_all_ir(self, figsize = (20, 10), figformat = (6,8),
                     xlims = (0, 20e-3), windowed = False):
@@ -698,11 +694,7 @@ class InsituMeasurementPostPro():
             whether to plot windowed or non-windowed IR (if already computed)
         """
         # Number of curves per axis
-<<<<<<< Updated upstream
-        num_of_cur_axis = self.num_curves_per_axis(figformat = figformat)
-=======
         num_of_cur_axis, num_of_remaining_cur = self.num_curves_per_axis(figformat = figformat)
->>>>>>> Stashed changes
         # choose windowed or not
         if windowed:
             ht = self.htw_mtx
@@ -715,9 +707,6 @@ class InsituMeasurementPostPro():
         ax_counter = 0
         for row in range(figformat[0]):
             for col in range(figformat[1]):
-<<<<<<< Updated upstream
-                for curv in range(num_of_cur_axis):
-=======
                 if ax_counter < num_of_remaining_cur:
                     num_of_curv_2plot = num_of_cur_axis + 1
                 else:
@@ -725,7 +714,6 @@ class InsituMeasurementPostPro():
                 starting_curv = counter + 1
                 ending_curv = starting_curv + num_of_curv_2plot - 1
                 for curv in range(num_of_curv_2plot):
->>>>>>> Stashed changes
                     ht_plt = ht[counter,:]/np.amax(ht[counter,:])
                     ax[row, col] = self.plot_signal(ax = ax[row, col], 
                                                     xdata = self.time_ht, 
@@ -734,9 +722,6 @@ class InsituMeasurementPostPro():
                                                     ylabel = r'$h(t)$ [-]',
                                                     xlims = xlims, 
                                                     xlog = False, alpha = 0.7)
-<<<<<<< Updated upstream
-                    counter += 1
-=======
                     
                     ax[row, col].set_title("# {}-{}".format(starting_curv, ending_curv),
                                            loc = 'right')
@@ -799,59 +784,8 @@ class InsituMeasurementPostPro():
                                            loc = 'right')
                     counter += 1
                 ax_counter += 1
->>>>>>> Stashed changes
                 ax[row, col].set_xlabel("")
                 ax[row, col].set_ylabel("")
-                ax[row, col].set_title("# {}-{}".format(counter-num_of_cur_axis,counter-1),
-                                       loc = 'right')
-                ax[figformat[0]-1, col].set_xlabel("Time [s]")
-            ax[row, 0].set_ylabel(r'$h(t)$ [-]')
-        plt.suptitle("Amplitude (IR) / Windowed: {}".format(str(windowed)))
-        plt.tight_layout()      
-    
-    def plot_all_frf(self, figsize = (20, 10), figformat = (6,8),
-                    xlims = (20, 20000), ylims = None, windowed = False):
-        """ plot all FRF's
-        
-        Parameters 
-        ---------------
-        figsize : tuple
-            size of the final figure
-        figformat : tuple
-            number of rows and columns of the figure
-        xlims : tuple
-            min and max values of your x-axis (limit view)
-        windowed : bool
-            whether to plot windowed or non-windowed IR (if already computed)
-        """
-        # Number of curves per axis
-        num_of_cur_axis = self.num_curves_per_axis(figformat = figformat)
-        # choose windowed or not
-        if windowed:
-            Hw = self.Hww_mtx
-        else:
-            Hw = self.Hw_mtx
-        # axes
-        fig, ax = plt.subplots(figformat[0], figformat[1], figsize = figsize,
-                               sharex = True, sharey = True, squeeze=False)
-        counter = 0
-        for row in range(figformat[0]):
-            for col in range(figformat[1]):
-                for curv in range(num_of_cur_axis):
-                    Hw_plt = 20*np.log10(np.abs(Hw[counter,:]))
-                    ax[row, col] = self.plot_signal(ax = ax[row, col], 
-                                                    xdata = self.freq_Hw, 
-                                                    ydata = Hw_plt, 
-                                                    xlabel = 'Frequency [Hz]', 
-                                                    ylabel = r'$|H(f)|$ [dB]',
-                                                    xlims = xlims,
-                                                    ylims = ylims,
-                                                    xlog = True, alpha = 0.7)
-                    counter += 1
-                ax[row, col].set_xlabel("")
-                ax[row, col].set_ylabel("")
-                ax[row, col].set_title("# {}-{}".format(counter-num_of_cur_axis,counter-1),
-                                       loc = 'right')
                 ax[figformat[0]-1, col].set_xlabel("Frequency [Hz]")
             ax[row, 0].set_ylabel(r"$|H(f)|$ [dB]")
         plt.suptitle("Magnitude (FRF) / Windowed: {}".format(str(windowed)))
@@ -879,21 +813,12 @@ class InsituMeasurementPostPro():
             whether to plot windowed or non-windowed IR (if already computed)
         """
         # Number of curves per axis
-<<<<<<< Updated upstream
-        num_of_cur_axis = self.num_curves_per_axis(figformat = figformat)
-=======
         num_of_cur_axis, num_of_remaining_cur = self.num_curves_per_axis(figformat = figformat)
->>>>>>> Stashed changes
         time = yt_list[0][0].timeVector
         # axes
         fig, ax = plt.subplots(figformat[0], figformat[1], figsize = figsize,
                                sharex = True, sharey = True, squeeze=False)
         counter = 0
-<<<<<<< Updated upstream
-        for row in range(figformat[0]):
-            for col in range(figformat[1]):
-                for curv in range(num_of_cur_axis):
-=======
         ax_counter = 0
         for row in range(figformat[0]):
             for col in range(figformat[1]):
@@ -904,7 +829,6 @@ class InsituMeasurementPostPro():
                 starting_curv = counter + 1
                 ending_curv = starting_curv + num_of_curv_2plot - 1
                 for curv in range(num_of_curv_2plot):
->>>>>>> Stashed changes
                     yt_plt = yt_list[counter][idmed].timeSignal[:,ch]
                     ax[row, col] = self.plot_signal(ax = ax[row, col], 
                                                     xdata = time, 
@@ -914,20 +838,12 @@ class InsituMeasurementPostPro():
                                                     xlims = xlims,
                                                     ylims = ylims,
                                                     xlog = False, alpha = 0.7)
-<<<<<<< Updated upstream
-                    counter += 1
-                ax[row, col].set_xlabel("")
-                ax[row, col].set_ylabel("")
-                ax[row, col].set_title("# {}-{}".format(counter-num_of_cur_axis,counter-1),
-                                       loc = 'right')
-=======
                     ax[row, col].set_title("# {}-{}".format(starting_curv, ending_curv),
                                            loc = 'right')
                     counter += 1
                 ax_counter += 1
                 ax[row, col].set_xlabel("")
                 ax[row, col].set_ylabel("")
->>>>>>> Stashed changes
                 ax[figformat[0]-1, col].set_xlabel("Time [s]")
             ax[row, 0].set_ylabel(r'$y(t)$ [-]')
         plt.suptitle("Amplitude (time) of Ch. {}, Rep. {}".format(ch, idmed))
@@ -955,21 +871,12 @@ class InsituMeasurementPostPro():
             whether to plot windowed or non-windowed IR (if already computed)
         """
         # Number of curves per axis
-<<<<<<< Updated upstream
-        num_of_cur_axis = self.num_curves_per_axis(figformat = figformat)
-=======
         num_of_cur_axis, num_of_remaining_cur = self.num_curves_per_axis(figformat = figformat)
->>>>>>> Stashed changes
         freq = yt_list[0][0].freqVector
         # axes
         fig, ax = plt.subplots(figformat[0], figformat[1], figsize = figsize,
                                sharex = True, sharey = True, squeeze=False)
         counter = 0
-<<<<<<< Updated upstream
-        for row in range(figformat[0]):
-            for col in range(figformat[1]):
-                for curv in range(num_of_cur_axis):
-=======
         ax_counter = 0
         for row in range(figformat[0]):
             for col in range(figformat[1]):
@@ -980,7 +887,6 @@ class InsituMeasurementPostPro():
                 starting_curv = counter + 1
                 ending_curv = starting_curv + num_of_curv_2plot - 1
                 for curv in range(num_of_curv_2plot):
->>>>>>> Stashed changes
                     yt_spk = yt_list[counter][idmed].freqSignal[:,ch]
                     Yw_plt = 20*np.log10(np.abs(yt_spk))
                     ax[row, col] = self.plot_signal(ax = ax[row, col], 
@@ -991,20 +897,12 @@ class InsituMeasurementPostPro():
                                                     xlims = xlims,
                                                     ylims = ylims,
                                                     xlog = True, alpha = 0.7)
-<<<<<<< Updated upstream
-                    counter += 1
-                ax[row, col].set_xlabel("")
-                ax[row, col].set_ylabel("")
-                ax[row, col].set_title("# {}-{}".format(counter-num_of_cur_axis,counter-1), 
-                                       loc = 'right')
-=======
                     ax[row, col].set_title("# {}-{}".format(starting_curv, ending_curv),
                                            loc = 'right')
                     counter += 1
                 ax_counter += 1
                 ax[row, col].set_xlabel("")
                 ax[row, col].set_ylabel("")
->>>>>>> Stashed changes
                 ax[figformat[0]-1, col].set_xlabel("Frequency [Hz]")
             ax[row, 0].set_ylabel(r"$|Y(f)|$ [dB]")
         plt.suptitle("Magnitude (Spk) of Ch. {}, Rep. {}".format(ch, idmed))
