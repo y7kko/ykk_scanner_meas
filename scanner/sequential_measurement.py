@@ -1138,7 +1138,14 @@ class ScannerMeasurement():
         else:
             raise ValueError("Invalid choice of recording")
         return yt_obj
-        
+    
+
+    def pytta_calibrate(self):
+        rec = self.pytta_rec_noise()
+        self.save_meas_file(rec,0,meas_type='calib')
+        print('Sinal de calibração salvo com sucesso!!!')
+
+
     def sequential_measurement(self, bypass_scanner = False,
                                noise_at_each_nth = None,
                                pcc_min = 0.9999,
@@ -1383,9 +1390,14 @@ class ScannerMeasurement():
             filename = 'noise' + str(int(jrec)) + '.hdf5'
             complete_path = self.main_folder / self.name / 'measured_signals'
             pytta.save(str(complete_path / filename), yt_obj)
+        elif meas_type == 'calib':
+            # ptta saving the rec measurement
+            filename = 'calib' + str(int(jrec)) + '.hdf5'
+            complete_path = self.main_folder / self.name / 'measured_signals'
+            pytta.save(str(complete_path / filename), yt_obj)
         else:
             raise ValueError("Invalid measurement type to save.")
-        
+    
     
     def take_measurements(self, repetitions = 1, meas_name = 'name'):
         """ Move all motors sequentially through the array positions
