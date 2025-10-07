@@ -1064,12 +1064,15 @@ class ScannerMeasurement():
                 self.move_motor(motor_to_move = keys[axis],
                                 dist = distance_vector[axis])        
         
-    def sequential_movement(self,):
+    def sequential_movement(self,notify_func=None):
         """ Move all motors sequentially through the array positions
         """
         for jrec in range(self.receivers.coord.shape[0]):
             print(f'\n Position number {jrec+1} of {self.receivers.coord.shape[0]}')
-            
+            if notify_func is not None:
+                notify_func(f'\n Position number {jrec+1} of {self.receivers.coord.shape[0]}')
+                notify_func(f'Stand Array: {self.stand_array[jrec,:]}')
+
             self.move_motor_xyz(self.stand_array[jrec,:])
         
         print('\n Moving ended. I will shut down the board instance! \n')
