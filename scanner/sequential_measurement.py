@@ -983,12 +983,22 @@ class ScannerMeasurement():
             Distance in [m] to move the motor
         """
         pre_steps_to_send = dist * self.micro_steps / 0.008
+        
         if abs(dist) <= 0.16:
             steps_to_send = int(pre_steps_to_send)
+            print(f'Mandando esses steps {steps_to_send}')
             self.exit_flag = 0
             self.stepper_run_base(motor, steps_to_send)
-        elif abs(dist) >= 0.4:
+        elif abs(dist) > 0.16 and abs(dist) < 0.32:
+            steps_to_send = int(pre_steps_to_send/2)
+            print(f'Mandando esses steps {steps_to_send} em 2x')
+            self.exit_flag = 0
+            self.stepper_run_base(motor, steps_to_send)            
+            self.exit_flag = 0
+            self.stepper_run_base(motor, steps_to_send)
+        elif abs(dist) >= 0.32 and abs(dist) < 0.64:
             steps_to_send = int(pre_steps_to_send/4)
+            print(f'Mandando esses steps {steps_to_send} em 4x')
             self.exit_flag = 0
             self.stepper_run_base(motor, steps_to_send)            
             self.exit_flag = 0
@@ -998,11 +1008,13 @@ class ScannerMeasurement():
             self.exit_flag = 0
             self.stepper_run_base(motor, steps_to_send)
         else:
-            steps_to_send = int(pre_steps_to_send/2)
-            self.exit_flag = 0
-            self.stepper_run_base(motor, steps_to_send)            
-            self.exit_flag = 0
-            self.stepper_run_base(motor, steps_to_send)
+            steps_to_send = int(pre_steps_to_send/6)
+            print(f'Mandando esses steps {steps_to_send} em 6x')
+            for run in range(6):
+                self.exit_flag = 0
+                self.stepper_run_base(motor, steps_to_send)            
+            
+
     
     def running_callback(self, data):
         """Callback function to inform if the motor is moving or not
