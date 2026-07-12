@@ -534,9 +534,10 @@ class ScannerMeasurement():
         for jch in self.in_channel_sensor:
             in_sensor_channel_list.append(self.in_channel[jch])
         
+        
         pytta_rec = pytta.generate.measurement('rec', samplingRate = self.fs, 
                device = self.device, inChannels = in_sensor_channel_list, 
-               fftDegree = self.fft_degree)
+               fftDegree = 19)
         print('Acqusition started (Recording noise level)')
         yt_rec_obj = pytta_rec.run()
         print('Acqusition ended')
@@ -986,19 +987,19 @@ class ScannerMeasurement():
         
         if abs(dist) <= 0.16:
             steps_to_send = int(pre_steps_to_send)
-            print(f'Mandando esses steps {steps_to_send}')
+            # print(f'Mandando esses steps {steps_to_send}')
             self.exit_flag = 0
             self.stepper_run_base(motor, steps_to_send)
         elif abs(dist) > 0.16 and abs(dist) < 0.32:
             steps_to_send = int(pre_steps_to_send/2)
-            print(f'Mandando esses steps {steps_to_send} em 2x')
+            # print(f'Mandando esses steps {steps_to_send} em 2x')
             self.exit_flag = 0
             self.stepper_run_base(motor, steps_to_send)            
             self.exit_flag = 0
             self.stepper_run_base(motor, steps_to_send)
         elif abs(dist) >= 0.32 and abs(dist) < 0.64:
             steps_to_send = int(pre_steps_to_send/4)
-            print(f'Mandando esses steps {steps_to_send} em 4x')
+            # print(f'Mandando esses steps {steps_to_send} em 4x')
             self.exit_flag = 0
             self.stepper_run_base(motor, steps_to_send)            
             self.exit_flag = 0
@@ -1009,7 +1010,7 @@ class ScannerMeasurement():
             self.stepper_run_base(motor, steps_to_send)
         else:
             steps_to_send = int(pre_steps_to_send/6)
-            print(f'Mandando esses steps {steps_to_send} em 6x')
+            # print(f'Mandando esses steps {steps_to_send} em 6x')
             for run in range(6):
                 self.exit_flag = 0
                 self.stepper_run_base(motor, steps_to_send)            
