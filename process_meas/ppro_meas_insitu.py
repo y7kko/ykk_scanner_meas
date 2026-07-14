@@ -443,6 +443,32 @@ class InsituMeasurementPostPro():
         # new FRF's
         self.Hww_mtx = self.Hww_mtx[:,freq_init_idf:freq_end_idf+delta_freq:Didf]
         
+             
+    def freq_trunc(self,flims:list=[None,None],from_meas_obj=False):
+        """reset_freq_resolution só que acho mais previsível fazer assim
+
+        vey coisa de puto chamar hww e hw mtx. Vou stick to Hww
+
+        Args:
+            flims (list): Caso None, o limite inferior ou superior
+            será o máximo que o vetor de frequências permitir. Defaults to [None,None].
+
+        """
+        if len(flims) != 2:
+            raise ValueError("flims precisa de ser uma lista com dois valores(None vale)")
+        if not from_meas_obj:
+            for idx,lim in enumerate(flims):
+                if lim is None:
+                    flims[idx] = self.freq_Hw[-idx] 
+        else:
+            flims[0] = self.ppro_obj.meas_obj.freq_min
+            flims[1] = self.ppro_obj.meas_obj.freq_max
+
+        fidx = np.where((self.freq_Hw >= flims[0]) & (self.freq_Hw<= flims[1]))[0]
+        self.freq_Hw = self.freq_Hw[fidx]
+        self.Hww_mtx = self.Hww_mtx[:,fidx]
+
+        
     def moving_avg(self, idir = 0, nfft = 8192):
         """ Computes moving average on spectrum
         """
