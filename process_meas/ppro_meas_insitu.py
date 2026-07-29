@@ -212,7 +212,16 @@ class InsituMeasurementPostPro():
         """ Load all IRs to a matrix
         """
         # load 0 case
-        ht = self.load_ir_byindex(0)
+        try:
+            ht = self.load_ir_byindex(0)
+        except:
+            response = input('IRs were not computed, do you want to compute it? y/N')
+            if response.lower() == 'y':
+                self.compute_all_ir_load()
+                ht = self.load_ir_byindex(0)
+            else:
+                raise FileNotFoundError('Impulse responses were not calculated.')
+
         
         # initialize
         self.ht_mtx = np.zeros((self.meas_obj.receivers.coord.shape[0], len(ht.timeSignal)))
