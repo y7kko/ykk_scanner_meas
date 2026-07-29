@@ -383,6 +383,8 @@ class InsituMeasurementPostPro():
             
         self.freq_Hw = np.linspace(0, (nfft-1)*self.meas_obj.fs/nfft, nfft)[:self.nfft_half]
         self.Hw_mtx = np.fft.fft(self.ht_mtx, axis = 1)[:,:self.nfft_half]
+        if not hasattr(self,'Hww_mtx'):
+            self.Hww_mtx = self.Hw_mtx
     
     def pcc_magspk(self, yt_list, ref_ch = 1):
         """ Computes the PCC between the magnitude of a recording and the ref. sweep
@@ -443,6 +445,7 @@ class InsituMeasurementPostPro():
         # new FRF's
         self.Hww_mtx = self.Hww_mtx[:,freq_init_idf:freq_end_idf+delta_freq:Didf]
         
+        self.ht_mtx = self.ht_mtx[:,:NEW_NFFT]
              
     def freq_trunc(self,flims:list=[None,None],from_meas_obj=False):
         """reset_freq_resolution só que acho mais previsível fazer assim
