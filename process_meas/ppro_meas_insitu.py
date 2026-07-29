@@ -454,6 +454,12 @@ class InsituMeasurementPostPro():
         # new FRF's
         self.Hww_mtx = self.Hww_mtx[:,freq_init_idf:freq_end_idf+delta_freq:Didf]
         
+    def time_trunc(self,ir_end:float,kind='time'):
+        if kind == 'time':
+            NEW_NFFT = self.meas_obj.fs*ir_end
+        else:
+            NEW_NFFT = int(ir_end)
+        self.time_ht = self.time_ht[:NEW_NFFT]
         self.ht_mtx = self.ht_mtx[:,:NEW_NFFT]
              
     def freq_trunc(self,flims:list=[None,None],from_meas_obj=False):
