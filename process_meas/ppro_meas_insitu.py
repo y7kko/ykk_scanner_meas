@@ -633,6 +633,24 @@ class InsituMeasurementPostPro():
         if normalize:
             ht = self.ht_mtx[idir,:]/np.amax(self.ht_mtx[idir,:])
             htw = self.htw_mtx[idir,:]/np.amax(self.htw_mtx[idir,:])
+            
+        plt.figure()
+        plt.plot(self.time_ht, ht , '-k', label = 'raw', linewidth = 2)
+        plt.plot(self.time_ht, htw, '-r', label = 'windowed', alpha = 0.7)
+        plt.plot(self.time_ht, self.adrienne_win, '--b', label = 'window', alpha = 0.7)
+        plt.grid()
+        plt.legend()
+        plt.xlim(xlims)
+        plt.xlabel("Time [s]")
+        plt.ylabel("Amplitude [-]")
+                
+    def plot_all_ir(self, figsize = (15,20), figformat = (7,9),
+                    normalize = True, xlims = (0, 50e-3), windowed = False):
+        """plot almost all irs
+        """
+        # Number of curves per axis
+        num_of_axis = figformat[0]*figformat[1]
+        num_of_cur_axis = int(self.meas_obj.receivers.coord.shape[0]/num_of_axis)
         
         fig, ax = plt.subplots(1, 1, figsize = (8, 4))
         
