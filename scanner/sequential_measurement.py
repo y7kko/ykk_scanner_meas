@@ -430,6 +430,7 @@ class ScannerMeasurement():
         # self.in_channel_ref = in_channel_ref_onrec
         self.in_channel_ref_onrec = in_channel_ref_onrec # voltage physical channel
         self.in_channel_sensor_onrec = in_channel_sensor_onrec # microphone physical channel
+        self.ai_range = ai_range
         self.sensor_sens = sensor_sens # microphone sens
         self.sensor_current = sensor_current # microphone current
         
