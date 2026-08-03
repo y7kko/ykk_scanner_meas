@@ -15,16 +15,10 @@ from receivers import Receiver
 from sources import Source
 import pytta
 #%% Naming things
-<<<<<<< Updated upstream
-name = 'pcc_tests' #'melamine_L60cm_d3cm_s100cm_2mics_17072024' # Remember good practices --> samplename_arraykeyword_ddmmaaaa
-# main_folder = 'D:/Work/dev/scanner_meas/meas_scripts/'#'D:/Work/UFSM/Pesquisa/insitu_arrays/experimental_dataset/reptest_eric/'# use forward slash
-main_folder = 'D:/Work/UFSM/Pesquisa/insitu_arrays/experimental_dataset/reptest_eric/'# use forward slash
-=======
 # name = 'pcc_tests' #'melamine_L60cm_d3cm_s100cm_2mics_17072024' # Remember good practices --> samplename_arraykeyword_ddmmaaaa
 # main_folder = 'D:/Work/UFSM/Pesquisa/insitu_arrays/experimental_dataset/reptest_eric/'# use forward slash
 name = 'testing_meas' #'melamine_L60cm_d3cm_s100cm_2mics_17072024' # Remember good practices --> samplename_arraykeyword_ddmmaaaa
 main_folder = 'D:/Work/dev/scanner_meas/meas_scripts/'# use forward slash
->>>>>>> Stashed changes
 
 #%% Define your source object - coordinates are important when estimating the impedance sometimes. 
 ### This should be part of measurement metadata

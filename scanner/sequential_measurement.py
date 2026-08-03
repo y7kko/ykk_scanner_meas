@@ -349,7 +349,7 @@ class ScannerMeasurement():
             complete_path = self.main_folder / self.name / 'measured_signals'
             pytta.save(str(complete_path / 'xt.hdf5'), self.xt)
     
-    def ni_initializer(self, buffer_size = 2**8, play_rec_type = 'NI play and rec',repetitions = 1):
+    def ni_initializer(self, buffer_size = 2**8, play_rec_type = 'NI play and rec'):
         """ Initialize NI for measurement
         
         Parameters
@@ -363,22 +363,18 @@ class ScannerMeasurement():
         """
         self.play_rec_type = play_rec_type
         self.buffer_size = buffer_size
-        self.ni_control_obj = NIMeasurement(fs = self.xt.samplingRate, 
-                                            buffer_size = self.buffer_size,
-                                            reference_signal = self.xt)
+        self.ni_control_obj = NIMeasurement(reference_signal = self.xt, 
+                                            fs = self.fs, 
+                                            buffer_size = self.buffer_size)
         self.ni_control_obj.get_system_and_channels()
-        self.repetitions = repetitions
 
     
-    # def ni_set_output_channels(self, out_channel_to_ni = 3, out_channel_to_amp = 1, 
-    #                            ao_range = 10.0):
-    def ni_set_output_channels(self, physical_channel_nums = [0],
-                            ao_range = 10):
+    def ni_set_output_channels(self, out_channel_to_ni = 3, out_channel_to_amp = 1, 
+                               ao_range = 10.0):
         """ Set NI output channels
         """
-        # self.out_channel_to_ni = out_channel_to_ni
-        # self.out_channel_to_amp = out_channel_to_amp
-        self.physical_channel_nums = physical_channel_nums
+        self.out_channel_to_ni = out_channel_to_ni
+        self.out_channel_to_amp = out_channel_to_amp
         self.ao_range = ao_range
         if self.play_rec_type == 'NI play and rec':
             self.ni_control_obj.set_output_channels(physical_channel_nums =\
@@ -415,40 +411,6 @@ class ScannerMeasurement():
         self.ni_set_1mic_1volt_chs()
         # self.in_channel_ref = 0
         # self.in_channel_sensor = [1]
-        self.ni_control_obj.set_output_channels(physical_channel_nums = self.physical_channel_nums,
-                                                ao_range = self.ao_range)
-        
-
-    def ni_set_input_channels(self, in_channel_ref_onrec = 0, in_channel_sensor_onrec = 1,
-                                ai_range = 5, sensor_sens = 50, sensor_current = 4e-3):
-        """ Set NI output channels
-        """
-        # self.in_channel_sensor = in_channel_sensor_onrec
-        # self.in_channel_ref = in_channel_ref_onrec
-        self.in_channel_ref_onrec = in_channel_ref_onrec # voltage physical channel
-        self.in_channel_sensor_onrec = in_channel_sensor_onrec # microphone physical channel
-        self.ai_range = ai_range
-        self.sensor_sens = sensor_sens # microphone sens
-        self.sensor_current = sensor_current # microphone current
-        
-        # You can set multiple recording channels. Below is how you set a voltage channel in channel 0.
-        self.ni_control_obj.set_sensor_properties(sensor_type = 'voltage',
-                                              physical_channel_num = self.in_channel_ref_onrec, 
-                                              sensitivity = 1, ai_range = self.ai_range)
-        # You need to define a recording channel. Below is how you set a microphone in channel 1
-        self.ni_control_obj.set_sensor_properties(sensor_type = 'microphone', 
-                                              physical_channel_num = self.in_channel_sensor_onrec,
-                                              sensor_current =  self.sensor_current, 
-                                              sensitivity = self.sensor_sens, 
-                                              ai_range =  self.ai_range)
-        
-        # self.ni_control_obj.set_input_channels(in_channel_ref = self.in_channel_ref_onrec, 
-        #                                         in_channel_sensor = self.in_channel_sensor_onrec,
-        #                                         ai_range = self.ai_range, 
-        #                                         sensor_sens = self.sensor_sens, 
-        #                                         sensor_current = self.sensor_current)
-        # self.save()
-        # self.load()
         
     def ni_set_1mic_1volt_chs(self,):
         """ Set 1 mic and 1 voltage channel in the correct order
@@ -572,32 +534,11 @@ class ScannerMeasurement():
         for jch in self.in_channel_sensor:
             in_sensor_channel_list.append(self.in_channel[jch])
         
-        
         pytta_rec = pytta.generate.measurement('rec', samplingRate = self.fs, 
                device = self.device, inChannels = in_sensor_channel_list, 
                fftDegree = 19)
         print('Acqusition started (Recording noise level)')
         yt_rec_obj = pytta_rec.run()
-        print('Acqusition ended')
-        return yt_rec_obj
-    
-    def lanxi_rec_noise(self,):
-        """ Measure the microphone signal in the enviroment
-        
-        For SNR estimations
-        
-        Returns
-        ----------
-        yt_rec_obj : pytta object
-            output signal
-        """
-        in_sensor_channel_list = []
-        for jch in self.in_channel_sensor:
-            in_sensor_channel_list.append(self.in_channel[jch])
-        
-        print('Acqusition started (Recording noise level)')
-
-        yt_rec_obj = self.lanxi_control_obj.rec()
         print('Acqusition ended')
         return yt_rec_obj
     
@@ -615,7 +556,6 @@ class ScannerMeasurement():
        
     def ir(self, yt, regularization = True, deconv_with_rec = True,
            lag_mat_sweep = True, freq_limits = None, reverse_phase = False):
-           ref_channel = 0, recording_channel = 1):
         """ Computes the impulse response of a given output
         
         Parameters
@@ -664,20 +604,6 @@ class ScannerMeasurement():
              regularization = regularization, freq_limits = freq_limits)
         if reverse_phase:
             ht.IR.timeSignal = -ht.IR.timeSignal
-            # ht = pytta.ImpulsiveResponse(excitation = yt_list[self.in_channel_ref-1], 
-            #      recording = yt_list[self.in_channel_sensor-1], samplingRate = self.fs, 
-            #      regularization = regularization, freq_limits = [self.freq_min, self.freq_max])
-            
-            # This new version is assuming that the mic signal is at the first channel and the reference
-            # is at the second channel
-            ht = pytta.ImpulsiveResponse(excitation = yt_list[ref_channel], 
-                 recording = yt_list[recording_channel], samplingRate = self.fs, 
-                 regularization = regularization, freq_limits = [self.freq_min, self.freq_max])
-        else:
-            ht = pytta.ImpulsiveResponse(excitation = self.xt, 
-                 recording = yt_list[recording_channel], 
-                 samplingRate = self.fs, regularization = regularization, 
-                 freq_limits = [self.freq_min, self.freq_max])
         return ht
 
     def cross_corr_delay_id(self, yt):
@@ -994,7 +920,7 @@ class ScannerMeasurement():
         ax.grid(False)
         ax.set_xlim((-baffle_size/2, baffle_size/2))
         ax.set_ylim((-baffle_size/2, baffle_size/2))
-        ax.set_zlim((-sample_thickness, baffle_size))
+        ax.set_zlim((-sample_thickness, 1.2*self.source.coord[0, 2]))
         ax.view_init(elev=elev, azim=azim)
         plt.tight_layout()
         if savefig:
@@ -1037,15 +963,12 @@ class ScannerMeasurement():
             Distance in [m] to move the motor
         """
         pre_steps_to_send = dist * self.micro_steps / 0.008
-        
         if abs(dist) <= 0.16:
             steps_to_send = int(pre_steps_to_send)
-            # print(f'Mandando esses steps {steps_to_send}')
             self.exit_flag = 0
             self.stepper_run_base(motor, steps_to_send)
         elif abs(dist) > 0.16 and abs(dist) < 0.32:
             steps_to_send = int(pre_steps_to_send/2)
-            # print(f'Mandando esses steps {steps_to_send} em 2x')
             self.exit_flag = 0
             self.stepper_run_base(motor, steps_to_send)            
             self.exit_flag = 0
@@ -1199,8 +1122,6 @@ class ScannerMeasurement():
             print("NI not done yet. Going on...")
         elif self.play_rec_type == 'SC play and rec':  # rec with NI
             yt_obj = self.pytta_rec_noise()
-        elif self.play_rec_type == 'LANXI play and rec':
-            yt_obj = self.lanxi_rec_noise()
         else:
             raise ValueError("Invalid choice of recording")
         return yt_obj
@@ -1463,7 +1384,7 @@ class ScannerMeasurement():
             pytta.save(str(complete_path / filename), yt_obj)
         else:
             raise ValueError("Invalid measurement type to save.")
-    
+        
     
     def take_measurements(self, repetitions = 1, meas_name = 'name'):
         """ Move all motors sequentially through the array positions
@@ -1513,10 +1434,6 @@ class ScannerMeasurement():
         if hasattr(self, 'pytta_meas'):
             del temp_dict['pytta_meas']
         if hasattr(self, 'board'):
-            # try:
-            #    # board.shutdown_flag = True quando ta desligado
-            #     self.board.shutdown()
-            # finally:
             del temp_dict['board']
         if hasattr(self, 'ni_control_obj'):
             del temp_dict['ni_control_obj']
@@ -1557,7 +1474,6 @@ class ScannerMeasurement():
                     freq_min = self.freq_min, freq_max = self.freq_max,
                     n_zeros_pad = self.n_zeros_pad, save_xt = False)
         self.Nsamples = len(self.xt.timeSignal[:,0])
-        
         if self.play_rec_type == 'SC play and rec':#self.sound_card_measurement:
             print("Loading on PayRec type as {}".format(self.play_rec_type))
             self.pytta_play_rec_setup(in_channel = self.in_channel, 
@@ -1589,32 +1505,6 @@ class ScannerMeasurement():
                                       out_channel = self.out_channel, 
                                       output_amplification = self.output_amplification)
         
-            # print('measured_signals')
-            self.ni_initializer(buffer_size = self.buffer_size,
-                                repetitions = self.repetitions)
-            self.ni_control_obj.set_output_channels(physical_channel_nums = self.physical_channel_nums,
-                                                    ao_range = self.ao_range)
-            # You can set multiple recording channels. Below is how you set a voltage channel in channel 0.
-            self.ni_control_obj.set_sensor_properties(sensor_type = 'voltage',
-                                                  physical_channel_num = self.in_channel_ref_onrec, 
-                                                  sensitivity = 1, ai_range = self.ai_range)
-            # You need to define a recording channel. Below is how you set a microphone in channel 1
-            self.ni_control_obj.set_sensor_properties(sensor_type = 'microphone', 
-                                                  physical_channel_num = self.in_channel_sensor_onrec,
-                                                  sensor_current =  self.sensor_current, 
-                                                  sensitivity = self.sensor_sens, 
-                                                  ai_range =  self.ai_range)
-            # self.ni_set_output_channels(out_channel_to_ni = self.out_channel_to_ni, 
-            #                             out_channel_to_amp = self.out_channel_to_amp, 
-            #                             ao_range = self.ao_range)
-            # self.ni_set_input_channels(in_channel_ref_onrec = self.in_channel_ref_onrec, 
-            #                         in_channel_sensor_onrec = self.in_channel_sensor_onrec,
-            #                         ai_range = self.ai_range, 
-            #                         sensor_sens = self.sensor_sens, 
-            #                         sensor_current = self.sensor_current)
-            # self.ni_initializer(buffer_size = = self.buffer_size)
-            
-            
         self.__dict__.update(tmp_dict)
         
         
