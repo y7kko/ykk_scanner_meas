@@ -363,9 +363,6 @@ class ScannerMeasurement():
         """
         self.play_rec_type = play_rec_type
         self.buffer_size = buffer_size
-        self.ni_control_obj = NIMeasurement(reference_signal = self.xt, 
-                                            fs = self.fs, 
-                                            buffer_size = self.buffer_size)
         self.ni_control_obj = NIMeasurement(fs = self.xt.samplingRate, 
                                             buffer_size = self.buffer_size,
                                             reference_signal = self.xt)
