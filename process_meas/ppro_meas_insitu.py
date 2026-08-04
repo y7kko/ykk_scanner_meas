@@ -480,8 +480,6 @@ class InsituMeasurementPostPro():
             
         self.freq_Hw = np.linspace(0, (nfft-1)*self.meas_obj.fs/nfft, nfft)[:self.nfft_half]
         self.Hw_mtx = np.fft.fft(self.ht_mtx, axis = 1)[:,:self.nfft_half]
-        if not hasattr(self,'Hww_mtx'):
-            self.Hww_mtx = self.Hw_mtx
     
     def pcc_magspk(self, yt_list, ref_ch = 1):
         """ Computes the PCC between the magnitude of a recording and the ref. sweep
@@ -550,7 +548,7 @@ class InsituMeasurementPostPro():
         self.time_ht = self.time_ht[:NEW_NFFT]
         self.ht_mtx = self.ht_mtx[:,:NEW_NFFT]
              
-    def freq_trunc(self,flims:list=[None,None],from_meas_obj=False):
+    def freq_trunc(self,flims:list=[None,None],from_meas_obj=False,useHw=False):
         """reset_freq_resolution só que acho mais previsível fazer assim
 
         vey coisa de puto chamar hww e hw mtx. Vou stick to Hww
@@ -572,7 +570,11 @@ class InsituMeasurementPostPro():
 
         fidx = np.where((self.freq_Hw >= flims[0]) & (self.freq_Hw<= flims[1]))[0]
         self.freq_Hw = self.freq_Hw[fidx]
-        self.Hww_mtx = self.Hww_mtx[:,fidx]
+        if not useHw:
+            self.Hww_mtx = self.Hww_mtx[:,fidx]
+        else:
+            self.Hw_mtx = self.Hw_mtx[:,fidx]
+
 
         
     def moving_avg(self, idir = 0, nfft = 8192):
@@ -1073,3 +1075,10 @@ class InsituMeasurementPostPro():
         It will overwrite the empty object.
         """
         utils.load(self, filename = filename, path = path)
+
+
+    def Hw2Hww(self,):
+        self.Hww_mtx =self.Hw_mtx
+
+    def Hww2Hw(self,):
+        self.Hw_mtx =self.Hww_mtx
