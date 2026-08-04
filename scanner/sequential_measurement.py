@@ -536,7 +536,7 @@ class ScannerMeasurement():
         
         pytta_rec = pytta.generate.measurement('rec', samplingRate = self.fs, 
                device = self.device, inChannels = in_sensor_channel_list, 
-               fftDegree = 19)
+               fftDegree = 18)
         print('Acqusition started (Recording noise level)')
         yt_rec_obj = pytta_rec.run()
         print('Acqusition ended')
@@ -1007,7 +1007,7 @@ class ScannerMeasurement():
         Informs that the movement of a certain motor is complete and changes
         the value of the exit_flag variable in the class
         """
-        # global exit_flag
+        # globawl exit_flag
         date = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data[2]))
         print(f'Motor {data[1]} absolute motion completed at: {date}.')
         self.exit_flag += 1
