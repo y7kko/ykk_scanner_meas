@@ -147,7 +147,7 @@ class ScannerTemplate:
 
 
     @staticmethod
-    def auto_name(material:str,L:str,d:str,meas_type:str,date=None,unit='cm') -> 'str':
+    def auto_name(material:str,L:str=None,d:str=None,meas_type:str=None,date=None,unit='cm') -> 'str':
         """Gera um nome na convenção proposta do projeto
 
         Args:
@@ -163,7 +163,18 @@ class ScannerTemplate:
         """
         if date is None:
             date = datetime.now().strftime('%d%m%Y')
-        name = f"{material}_L{L}{unit}_d{d}{unit}_{meas_type}_{date}"
+        name = f'{material}'
+        if L:
+            name += f'_L{L}'
+        if d:
+            name += f'_d{d}'
+        if unit and (L or d):
+            name += f'{unit}'
+        if meas_type:
+            name +=f'_{meas_type}'
+
+        name += f'_{date}'
+        # name = f"{material}_L{L}{unit}_d{d}{unit}_{meas_type}_{date}"
         return name
 
 
