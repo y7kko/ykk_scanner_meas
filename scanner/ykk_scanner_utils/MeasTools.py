@@ -19,6 +19,9 @@ class MeasTools:
                               start_new_measurement = False
                               )
         
+        if main_folder.endswith('/'):
+            main_folder = main_folder[:-1]
+
         self.main_folder = main_folder
         self.name = name
         self.meas_obj.load()
@@ -29,12 +32,12 @@ class MeasTools:
         name = self.name
 
         # Renomeia pickle
-        pickle_file = Path(f'{main_folder}{name}/{name}.pkl')
-        pickle_file.rename(f'{main_folder}{name}/{new_name}.pkl')
+        pickle_file = Path(f'{main_folder}/{name}/{name}.pkl')
+        pickle_file.rename(f'{main_folder}/{name}/{new_name}.pkl')
 
         # Renomeia folder
-        project_folder = Path(main_folder + name)
-        project_folder.rename(f'{main_folder}{new_name}')
+        project_folder = Path(f'{main_folder}/{name}')
+        project_folder.rename(f'{main_folder}/{new_name}')
 
         # Renomeia referências dentro da classe
         self.meas_obj.name = new_name
@@ -43,3 +46,6 @@ class MeasTools:
         # Salva alterações
         self.meas_obj.save()
         self.name = new_name
+
+    def get_meas_obj(self,):
+        return self.meas_obj
