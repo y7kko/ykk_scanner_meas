@@ -14,16 +14,17 @@ class MeasTools:
             name (str): Project name
             main_folder (str): Folder where project is
         """
+        main_folder = os.path.expandvars(main_folder)
+        if main_folder.endswith('/'):
+            main_folder = main_folder[:-1]
+        self.main_folder = main_folder
+        self.name = name
+
         self.meas_obj = ScannerMeasurement(main_folder = main_folder, 
                               name = name,
                               start_new_measurement = False
                               )
-        
-        if main_folder.endswith('/'):
-            main_folder = main_folder[:-1]
 
-        self.main_folder = main_folder
-        self.name = name
         self.meas_obj.load()
 
 
