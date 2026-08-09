@@ -547,6 +547,20 @@ class InsituMeasurementPostPro():
             NEW_NFFT = int(ir_end)
         self.time_ht = self.time_ht[:NEW_NFFT]
         self.ht_mtx = self.ht_mtx[:,:NEW_NFFT]
+
+    def time_extend(self,val:float,kind:str='time'):
+        if kind.lower() in ['time','t','seconds']:
+            n_samples = self.meas_obj.fs*val
+        elif kind.lower() in ['samples','sample','spl','n']:
+            n_samples = val
+        pad_tuple = ((0,0),(0,n_samples))
+        self.ht_mtx = np.pad(self.ht_mtx,pad_tuple,constant_values=0)
+
+        max_time = (self.ht_mtx.shape[1] - 1)/self.meas_obj.fs
+        self.time_ht = np.linspace(0,max_time,self.ht_mtx.shape[1])
+        # self.time_ht = np.arange(0,)
+
+
              
     def freq_trunc(self,flims:list=[None,None],from_meas_obj=False,useHw=False):
         """reset_freq_resolution só que acho mais previsível fazer assim
